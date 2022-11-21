@@ -1,78 +1,64 @@
-# GitHub Codespaces ♥️ React
+# Ade - Credit Card Problem
 
-Welcome to your shiny new Codespace running React! We've got everything fired up and running for you to explore React.
+Before a credit card is submitted to a financial institution, it generally makes sense to run some simple reality checks on the number. The numbers are a good length and it's common to make minor transcription errors when the card is not scanned directly.
 
-You've got a blank canvas to work on from a git perspective as well. There's a single initial commit with the what you're seeing right now - where you go from here is up to you!
+The first check people often do is to validate that the card matches a known pattern from one of the accepted card providers. Some of these patterns are:
 
-Everything you do here is contained within this one codespace. There is no repository on GitHub yet. If and when you’re ready you can click "Publish Branch" and we’ll create your repository and push up your project. If you were just exploring then and have no further need for this code then you can simply delete your codespace and it's gone forever.
+```
++============+=============+===============+
+| Card Type  | Begins With | Number Length |
++============+=============+===============+
+| AMEX       | 34 or 37    | 15            |
++------------+-------------+---------------+
+| Discover   | 6011        | 16            |
++------------+-------------+---------------+
+| MasterCard | 51-55       | 16            |
++------------+-------------+---------------+
+| Visa       | 4           | 13 or 16      |
++------------+-------------+---------------+
+```
 
-This project was bootstrapped for you with [Create React App](https://github.com/facebook/create-react-app).
+All of these card types also generate numbers such that they can be validated by the Luhn algorithm, so that's the second check systems usually try. The steps are:
 
-## Available Scripts
+```
+1. Starting with the next to last digit and continuing with every other
+   digit going back to the beginning of the card, double the digit
+2. Sum all doubled and untouched digits in the number
+3. If that total is a multiple of 10, the number is valid
+```
 
-In the project directory, you can run:
+For example, given the card number `4408041234567893`:
 
-### `npm start`
+```
+Step 1:  8 4 0 8 0 4 2 2 6 4 10 6 14 8 18 3
+Step 2:  8+4+0+8+0+4+2+2+6+4+1+0+6+1+4+8+1+8+3 = 70
+Step 3:  70 % 10 == 0
+```
 
-We've already run this for you in the `Codespaces: server` terminal window below. If you need to stop the server for any reason you can just run `npm start` again to bring it back online.
+Thus that card is valid.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) in the built-in Simple Browser (`Cmd/Ctrl + Shift + P > Simple Browser: Show`) to view your running application.
+Let's try one more, `4417123456789112`:
 
-The page will reload automatically when you make changes.\
-You may also see any lint errors in the console.
+```
+Step 1:  8 4 2 7 2 2 6 4 10 6 14 8 18 1 2 2
+Step 2:  8+4+2+7+2+2+6+4+1+0+6+1+4+8+1+8+1+2+2 = 69
+Step 3:  69 % 10 != 0
+```
 
-### `npm test`
+That card is not valid.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Here are some more example test credit card numbers:
 
-### `npm run build`
+```
+American Express	378282246310005
+American Express	371449635398431
+Discover	6011111111111117
+Discover	6011000990139424
+Mastercard	5555555555554444
+Mastercard	5105105105105100
+Visa	4111111111111111
+Visa	4012888888881881
+Visa	4222222222222
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Write a program that accepts a credit card number as an argument. The program should print the card's type (or Unknown) as well a Valid/Invalid indication of whether or not the card passes the Luhn algorithm.
